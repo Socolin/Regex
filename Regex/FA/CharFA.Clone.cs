@@ -18,6 +18,8 @@ namespace RE
 			{
 				nclosure[i] = new CharFA<TAccept>(closure[i].IsAccepting, closure[i].AcceptSymbol);
 				nclosure[i].Tag = closure[i].Tag;
+				nclosure[i].CaptureGroupInfo = closure[i].CaptureGroupInfo;
+				nclosure[i].EndCaptureGroup = closure[i].EndCaptureGroup;
 			}
 			for (var i = 0; i < nclosure.Length; i++)
 			{

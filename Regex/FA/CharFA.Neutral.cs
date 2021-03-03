@@ -8,7 +8,8 @@ namespace RE
 		/// Indicates whether or not the state is neutral
 		/// </summary>
 		public bool IsNeutral {
-			get { return !IsAccepting && 0 == InputTransitions.Count && 1 == EpsilonTransitions.Count; }
+			// FIXME: About CaptureGroupInfo, we could use a list an regroup them in one node in TrimNeutrals
+			get { return !IsAccepting && 0 == InputTransitions.Count && 1 == EpsilonTransitions.Count && CaptureGroupInfo == null; }
 		}
 
 		/// <summary>
@@ -44,7 +45,8 @@ namespace RE
 				result = fa;
 				return false;
 			}
-			result = fa.EpsilonTransitions[0];
+			var replace = fa.EpsilonTransitions[0];
+			result = replace;
 			return fa != result; // false if circular
 		}
 		static CharFA<TAccept> _ForwardNeutrals(CharFA<TAccept> fa)

@@ -130,6 +130,14 @@ namespace RE
 					writer.Write(closure.IndexOf(fffa));
 					writer.WriteLine(" [style=dashed,color=gray]");
 				}
+				if (ffa.CaptureGroupInfo != null)
+				{
+					writer.Write(spfx);
+					writer.Write(i);
+					writer.Write("->");
+					writer.Write("capture" + ffa.CaptureGroupInfo.GroupNumber);
+					writer.WriteLine(" [label="  + ffa.EndCaptureGroup + " ,style=dashed,color=red]");
+				}
 				++i;
 			}
 			string delim = "";

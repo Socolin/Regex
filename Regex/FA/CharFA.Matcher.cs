@@ -109,6 +109,8 @@ namespace RE
 				if (-1 == context.Current)
 				{
 					// if we accept, return that
+					foreach (var state in states.Where(s => s.CaptureGroupInfo != null))
+						HandleCaptureGroup(context, state);
 					return successOnAnyState || IsAnyAccepting(states);
 				}
 				// move by current character
@@ -129,8 +131,6 @@ namespace RE
 				context.CaptureCurrent();
 				// advance the input
 				context.Advance();
-				foreach (var newState in newStates.Where(s => s.CaptureGroupInfo != null))
-					HandleCaptureGroup(context, newState);
 				// iterate to our next states
 				states = newStates;
 			}
@@ -142,7 +142,7 @@ namespace RE
 				if (!state.EndCaptureGroup)
 					context.CaptureGroupContext.StartCapture(state.CaptureGroupInfo, context.CaptureBuffer.Length);
 				else
-					context.CaptureGroupContext.CompleteCapture(state.CaptureGroupInfo, context.CaptureBuffer);
+					context.CaptureGroupContext.EndCapture(state.CaptureGroupInfo, context.CaptureBuffer);
 			}
 		}
 		bool _DoMatchDfa(ParseContext context)

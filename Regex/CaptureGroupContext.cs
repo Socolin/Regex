@@ -13,21 +13,22 @@ namespace RE
 		public void StartCapture(CaptureGroupInfo captureGroupInfo, long contextPosition)
 		{
 			var groupNumber = captureGroupInfo.GroupNumber;
+			if (ActiveCaptureGroups.Contains(groupNumber))
+				return;
 			ActiveCaptureGroups.Add(groupNumber);
 			CaptureGroupStartPosition[groupNumber] = (int) contextPosition;
 			if (captureGroupInfo.CaptureName != null)
 				CaptureGroupName.Add(groupNumber, captureGroupInfo.CaptureName);
 		}
 
-		public void CompleteCapture(CaptureGroupInfo captureGroupInfo, StringBuilder capture)
+		public void EndCapture(CaptureGroupInfo captureGroupInfo, StringBuilder capture)
 		{
 			var groupNumber = captureGroupInfo.GroupNumber;
 			if (!ActiveCaptureGroups.Contains(groupNumber))
 				return;
-			ActiveCaptureGroups.Remove(groupNumber);
 			var startCapturePosition = CaptureGroupStartPosition[groupNumber];
 			CaptureGroupStartPosition.Remove(groupNumber);
-			CaptureGroups.Add(groupNumber, capture.ToString(startCapturePosition, capture.Length - startCapturePosition));
+			CaptureGroups[groupNumber] = capture.ToString(startCapturePosition, capture.Length - startCapturePosition);
 		}
 
 		public void Clear()

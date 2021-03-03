@@ -154,8 +154,8 @@ namespace RE
 			var nffa = nfa.FirstAcceptingState;
 			nffa.IsAccepting = false;
 			nffa.EpsilonTransitions.Add(final);
-			nffa.CaptureGroupInfo = captureGroupInfo;
-			nffa.EndCaptureGroup = true;
+			final.CaptureGroupInfo = captureGroupInfo;
+			final.EndCaptureGroup = true;
 			return result;
 		}
 
