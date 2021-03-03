@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RE
 {
@@ -128,13 +129,15 @@ namespace RE
 		/// <param name="input">The input to use</param>
 		/// <param name="result">The states that are now entered as a result of the move</param>
 		/// <returns><paramref name="result"/> or a new collection if it wasn't specified.</returns>
-		public static IList<CharFA<TAccept>> FillMove(IEnumerable<CharFA<TAccept>> states, char input, IList<CharFA<TAccept>> result = null)
+		public static IList<CharFA<TAccept>> FillMove(IEnumerable<CharFA<TAccept>> states, char input, IList<CharFA<TAccept>> result = null, Action<CharFA<TAccept>> captureGroupHandler = null)
 		{
 			if (null == result) result = new List<CharFA<TAccept>>();
 			var ec = FillEpsilonClosure(states);
 			for (int ic = ec.Count,i=0;i<ic;++i)
 			{
 				var fa = ec[i];
+				if (fa.CaptureGroupInfo != null)
+					captureGroupHandler?.Invoke(fa);
 				// examine each of the states reachable from this state on no input
 				CharFA<TAccept> ofa;
 				// see if this state has this input in its transitions

@@ -593,10 +593,13 @@ namespace RE
 					case '(':
 						pc.Advance();
 						pc.Expecting();
+						var captureGroupInfo = _ParseCaptureGroupInfo(pc);
 						next = Parse(pc);
 						pc.Expecting(')');
 						pc.Advance();
 						next = _ParseModifier(next, pc);
+						if (captureGroupInfo != null)
+							next = new RegexCaptureExpression(next, captureGroupInfo);
 						if (null == result)
 							result = next;
 						else
@@ -822,6 +825,36 @@ namespace RE
 			result.Add(new RegexCharsetClassEntry(cls));
 			next = null;
 			readDash = false;
+		}
+
+		static CaptureGroupInfo _ParseCaptureGroupInfo(ParseContext pc)
+		{
+			var ignoreCaptureGroup = false;
+			var groupName = (string) null;
+			if (pc.Current == '?')
+			{
+				pc.Advance();
+				pc.Expecting();
+				if (pc.Current == ':') // Ignore capture
+				{
+					ignoreCaptureGroup = true;
+					pc.Advance();
+					pc.Expecting();
+				}
+				else if (pc.Current == '<')
+				{
+					pc.Advance();
+					pc.Expecting();
+					var l = pc.CaptureBuffer.Length;
+					pc.TryReadUntil('>', false);
+					groupName = pc.GetCapture(l);
+				}
+			}
+
+			if (ignoreCaptureGroup)
+				return null;
+
+			return new CaptureGroupInfo(groupName, pc.CaptureGroupNumber++);
 		}
 
 		static RegexExpression _ParseModifier(RegexExpression expr,ParseContext pc)

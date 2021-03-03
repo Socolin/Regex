@@ -416,6 +416,10 @@ namespace RE
 		/// </summary>
 		public StringBuilder CaptureBuffer { get; } = new StringBuilder();
 		/// <summary>
+		/// Store the captured element from ()
+		/// </summary>
+		public CaptureGroupContext CaptureGroupContext { get; } = new CaptureGroupContext();
+		/// <summary>
 		/// Indicates the 0 based position of the parse context
 		/// </summary>
 		public long Position { get; private set; } = -2;
@@ -436,6 +440,11 @@ namespace RE
 		/// </summary>
 		/// <remarks>Used for tracking column position</remarks>
 		public int TabWidth { get; set; } = 8;
+		/// <summary>
+		/// Count the capture group found
+		/// </summary>
+		public int CaptureGroupNumber { get; set; } = 1;
+
 		bool _EnsureInput()
 		{
 			if (0 == _input.Count)

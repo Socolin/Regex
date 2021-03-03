@@ -139,6 +139,27 @@ namespace RE
 			return result;
 		}
 		/// <summary>
+		/// Creates a new FA that capture passed expression
+		/// </summary>
+		/// <param name="expr">The expression to match</param>
+		/// <param name="accept">The symbol to accept</param>
+		/// <returns>A new FA that will match the union of the FA expressions passed</returns>
+		public static CharFA<TAccept> Capture(CharFA<TAccept> fa, CaptureGroupInfo captureGroupInfo, TAccept accept = default(TAccept))
+		{
+			var result = new CharFA<TAccept>();
+			var final = new CharFA<TAccept>(true, accept);
+			var nfa = fa.Clone();
+			nfa.CaptureGroupInfo = captureGroupInfo;
+			result.EpsilonTransitions.Add(nfa);
+			var nffa = nfa.FirstAcceptingState;
+			nffa.IsAccepting = false;
+			nffa.EpsilonTransitions.Add(final);
+			nffa.CaptureGroupInfo = captureGroupInfo;
+			nffa.EndCaptureGroup = true;
+			return result;
+		}
+
+		/// <summary>
 		/// Creates a new FA that will match a repetition of the specified FA expression
 		/// </summary>
 		/// <param name="expr">The expression to repeat</param>

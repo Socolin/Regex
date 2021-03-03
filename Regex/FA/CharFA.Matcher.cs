@@ -1,4 +1,7 @@
-﻿namespace RE
+﻿using System;
+using System.Linq;
+
+namespace RE
 {
 	partial class CharFA<TAccept>
 	{
@@ -28,7 +31,8 @@
 					line,
 					column,
 					position,
-					context.GetCapture(l));
+					context.GetCapture(l),
+					context.CaptureGroupContext.CaptureGroups);
 			return null;
 		}
 		/// <summary>
@@ -58,7 +62,8 @@
 					line,
 					column,
 					position,
-					context.GetCapture(l));
+					context.GetCapture(l),
+					context.CaptureGroupContext.CaptureGroups);
 			return null;
 		}
 		/// <summary>
@@ -88,7 +93,8 @@
 					line,
 					column,
 					position,
-					context.GetCapture(l));
+					context.GetCapture(l),
+					context.CaptureGroupContext.CaptureGroups);
 			return null;
 		}
 		// almost the same as our lex methods
@@ -105,10 +111,11 @@
 					return IsAnyAccepting(states);
 				}
 				// move by current character
-				var newStates = FillMove(states, (char)context.Current);
+				var newStates = FillMove(states, (char)context.Current, captureGroupHandler: state => HandleCaptureGroup(context, state));
 				// we couldn't match anything
 				if (0 == newStates.Count)
 				{
+					context.CaptureGroupContext.Clear();
 					// if we accept, return that
 					if (IsAnyAccepting(states))
 						return true;
@@ -121,8 +128,20 @@
 				context.CaptureCurrent();
 				// advance the input
 				context.Advance();
+				foreach (var newState in newStates.Where(s => s.CaptureGroupInfo != null))
+					HandleCaptureGroup(context, newState);
 				// iterate to our next states
 				states = newStates;
+			}
+		}
+		private static void HandleCaptureGroup(ParseContext context, CharFA<TAccept> state)
+		{
+			if (state.CaptureGroupInfo != null)
+			{
+				if (!state.EndCaptureGroup)
+					context.CaptureGroupContext.StartCapture(state.CaptureGroupInfo, context.CaptureBuffer.Length);
+				else
+					context.CaptureGroupContext.CompleteCapture(state.CaptureGroupInfo, context.CaptureBuffer);
 			}
 		}
 		bool _DoMatchDfa(ParseContext context)

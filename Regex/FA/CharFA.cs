@@ -30,6 +30,14 @@ namespace RE
 		/// <summary>
 		/// Indicates a user-defined value to associate with this state
 		/// </summary>
+		public CaptureGroupInfo CaptureGroupInfo { get; set; } = null;
+		/// <summary>
+		/// Indicate a node when a capture group ends
+		/// </summary>
+		public bool EndCaptureGroup { get; set; } = false;
+		/// <summary>
+		/// Indicates a user-defined value to associate with this state
+		/// </summary>
 		public object Tag { get; set; } = null;
 		/// <summary>
 		/// Constructs a new instance with the specified accepting value and accept symbol.

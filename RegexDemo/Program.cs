@@ -447,7 +447,7 @@ namespace RegexDemo
 			}
 			if (success)
 			{
-				return new RE.CharFAMatch(line, column, position, context.GetCapture(l));
+				return new RE.CharFAMatch(line, column, position, context.GetCapture(l), context.CaptureGroupContext.CaptureGroups);
 			}
 			return null;
 		}
